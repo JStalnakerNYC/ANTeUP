@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Pressable, Alert, Text, View } from "react-native";
+import { Pressable, Text } from "react-native";
+import { styles } from "./FlatButtton/FlatButton.styles";
 
 export const FlatButton = ({ title, onPress }) => {
   const handlePress = () => {
@@ -20,20 +21,3 @@ export const FlatButton = ({ title, onPress }) => {
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 15,
-    padding: 6,
-    height: 50,
-    width: "50%",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: "white",
-    fontFamily: "Century Gothic",
-  },
-});
