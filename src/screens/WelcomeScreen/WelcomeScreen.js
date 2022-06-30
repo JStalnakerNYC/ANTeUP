@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View, Animated } from "react-native";
-import { FlatButton } from "../../../components/FlatButton";
+import { FlatButton } from "../../../components/FlatButtton/FlatButton";
 import { styles } from "./WelcomeScreen.styles";
 
 export default function WelcomeScreen({ navigation }) {
