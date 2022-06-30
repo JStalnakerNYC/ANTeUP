@@ -1,82 +1,90 @@
-import React from "react";
-import { Text, View, FlatList, SafeAreaView } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  Button,
+  Animated,
+} from "react-native";
 import { styles } from "./RaceScreen.styles";
 import { FlatButton } from "../../../components/FlatButtton/FlatButton";
 
-const DATA = [
-  { name: "Marie ‘Ant’oinette", length: 12, color: "BLACK", weight: 2 },
-  { name: "Flamin’ Pincers", length: 11, color: "RED", weight: 2 },
-  { name: "Big Susan", length: 20, color: "BLACK", weight: 5 },
-  {
-    name: "The Unbeareable Lightness of Being",
-    length: 5,
-    color: "SILVER",
-    weight: 1,
-  },
-  { name: "‘The Duke’", length: 17, color: "RED", weight: 3 },
-];
+export default function RaceScreen({ navigation }) {
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [field, setField] = useState(false);
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
 
-// const DATA = [
-//   {
-//     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-//     title: 'First Item',
-//   },
-//   {
-//     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-//     title: 'Second Item',
-//   },
-//   {
-//     id: '58694a0f-3da1-471f-bd96-145571e29d72',
-//     title: 'Third Item',
-//   },
-// ];
+  useEffect(() => {
+    Animated.timing(fadeAnimation, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: false,
+    }).start();
+  }, [fadeAnimation]);
 
-const Item = ({ name, length, color, weight }) => (
-  <View style={styles.row}>
-    <View style={styles.antDetails}>
-      <View style={styles.antDetailsHeader}>
-        <Text style={styles.name}>{name}</Text>
-      </View>
-      <View style={styles.antDetailsRow}>
-        <Text style={styles.text}>length: {length}</Text>
-        <Text style={styles.text}>color: {color}</Text>
-        <Text style={styles.text}>weight: {weight}</Text>
+  const fetchData = async () => {
+    const response = await fetch("https://sg-ants-server.herokuapp.com/ants");
+    const data = await response.json();
+    setData(data.ants);
+    setLoading(false);
+  };
+
+  const handleSet = () => {
+    fetchData();
+    setField(true);
+  };
+
+  //update the list based on the result of running the function on each iteration creating the probability
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  const Item = ({ name, length, color, weight }) => (
+    <View style={styles.row}>
+      <View style={styles.antDetails}>
+        <View style={styles.antDetailsHeader}>
+          <Text style={styles.name}>{name}</Text>
+        </View>
+        <View style={styles.antDetailsRow}>
+          <Text style={styles.text}>length: {length}</Text>
+          <Text style={styles.text}>color: {`${color}`.toLowerCase()}</Text>
+          <Text style={styles.text}>weight: {weight}</Text>
+        </View>
       </View>
     </View>
-  </View>
-);
-
-// const Item = ({ title }) => (
-//   <View style={styles.item}>
-//     <Text style={styles.title}>{title}</Text>
-//     <Text style={styles.title}>{id}</Text>
-//   </View>
-// );
-
-export default function RaceScreen({ navigation }) {
-  const handlePress = () => {
-    navigation.navigate("Welcome");
-  };
-  const renderItem = ({ item }) => (
-    <Item
-      name={item.name}
-      length={item.length}
-      color={item.color}
-      weight={item.weight}
-    />
   );
-  // const renderItem = ({ item }) => (
-  //   <Item title={item.id} />
-  // );
+
+  const renderItem = ({ item }) => (
+    <Animated.View style={{ opacity: fadeAnimation }}>
+      <Item
+        name={item.name}
+        length={item.length}
+        color={item.color}
+        weight={item.weight}
+      />
+    </Animated.View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.name}
-      />
-      <FlatButton title="Start Race" onPress={handlePress} />
+      {loading ? (
+        <View style={styles.waitingTextContainer}>
+          <Text style={styles.waitingText}>
+            The racers are ready and waiting...
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.name}
+        />
+      )}
+      {field ? null : <Button title="Set the field" onPress={handleSet} />}
+      <FlatButton title="Start Race" onPress={() => {}} />
     </SafeAreaView>
   );
 }

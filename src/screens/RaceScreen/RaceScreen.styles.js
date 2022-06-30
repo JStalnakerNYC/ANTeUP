@@ -8,10 +8,6 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
-  raceContainer: {
-    backgroundColor: "red",
-    width: "85%",
-  },
   row: {
     marginVertical: 10,
     flexDirection: "row",
@@ -48,5 +44,17 @@ export const styles = StyleSheet.create({
   text: {
     fontFamily: "Century Gothic",
     color: "white",
+  },
+  waitingText: {
+    textAlign: "center",
+    fontFamily: "Century Gothic",
+    color: "black",
+    fontSize: 30,
+  },
+  waitingTextContainer: {
+    width: "85%",
+    height: "85%",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
