@@ -22,30 +22,23 @@ export const styles = StyleSheet.create({
     width: "95%",
     height: 20,
     justifyContent: "center",
+    alignItems: "center",
   },
-  antDetailsHeader: {
+  antDetailsRow: {
     flexDirection: "row",
     width: "95%",
     height: 20,
     justifyContent: "space-between",
     marginVertical: 2,
   },
-  antDetailsRow: {
-    flexDirection: "row",
-    width: "95%",
-    height: 20,
-    justifyContent: "space-around",
-    marginVertical: 2,
-  },
   name: {
-    fontFamily: "Century Gothic",
+    fontFamily: "Century Gothic Bold",
     color: "white",
-    marginLeft: 20,
+    fontWeight: "bold",
   },
   status: {
     fontFamily: "Century Gothic",
     color: "white",
-    marginRight: 25,
   },
   text: {
     fontFamily: "Century Gothic",
@@ -53,8 +46,9 @@ export const styles = StyleSheet.create({
   },
   alertText: {
     textAlign: "center",
-    fontFamily: "Century Gothic",
+    fontFamily: "Century Gothic Bold",
     color: "black",
+    fontWeight: "bold",
     fontSize: 30,
   },
   waitingTextContainer: {

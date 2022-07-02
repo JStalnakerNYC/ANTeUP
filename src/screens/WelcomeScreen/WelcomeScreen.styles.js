@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontFamily: "Century Gothic",
+    fontFamily: "Century Gothic Bold",
     marginVertical: 10,
     fontSize: 60,
   },

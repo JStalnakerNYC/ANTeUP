@@ -25,7 +25,7 @@ export default function RaceScreen({ navigation }) {
 
   // useEffect(() => {
   //   sortUpdatedData();
-  // }, [sortUpdatedData]);
+  // }, []);
 
   const fetchAnts = async () => {
     const response = await fetch("https://sg-ants-server.herokuapp.com/ants");
@@ -82,11 +82,12 @@ export default function RaceScreen({ navigation }) {
   //     return b.updatedData.status - a.updatedData.status;
   //   });
   // };
+  // console.log("here is updated", updatedData);
 
   const Item = ({ name, length, color, weight, status }) => (
     <View style={styles.row}>
       <View style={styles.antDetails}>
-        <View style={styles.antDetailsHeader}>
+        <View style={styles.antDetailsRow}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.status}>{status}</Text>
         </View>

@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import React from "react";
+import { Text } from "react-native";
 import { useFonts } from "expo-font";
-import AppLoading from "expo-app-loading";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import WelcomeScreen from "./src/screens/WelcomeScreen/WelcomeScreen";
@@ -12,10 +12,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [fontLoaded] = useFonts({
     "Century Gothic": require("./assets/fonts/CenturyGothic.ttf"),
+    "Century Gothic Bold": require("./assets/fonts/CenturyGothic-Bold.ttf"),
   });
 
   if (!fontLoaded) {
-    return <AppLoading />;
+    return <Text>App loading...</Text>;
   }
 
   return (
