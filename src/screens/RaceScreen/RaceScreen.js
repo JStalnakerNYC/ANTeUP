@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Text, View, FlatList, SafeAreaView, Animated } from "react-native";
 import { styles } from "./RaceScreen.styles";
 import { FlatButton } from "../../../components/FlatButtton/FlatButton";
@@ -8,11 +8,11 @@ export default function RaceScreen({ navigation }) {
   const [updatedData, setUpdatedData] = useState([]);
   const [status, updateStatus] = useState("Not yet run");
 
-  const [hasRaceStarted, setHasRaceStarted] = useState(false);
+  const [raceStarted, setRaceStarted] = useState(false);
   const [raceCompleted, setRaceCompleted] = useState(false);
 
   const [loading, setLoading] = useState(true);
-  const [field, setField] = useState(false);
+  const [field, setField] = useState(true);
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -23,9 +23,13 @@ export default function RaceScreen({ navigation }) {
     }).start();
   }, [fadeAnimation]);
 
-  // useEffect(() => {
-  //   sortUpdatedData();
-  // }, []);
+  useEffect(() => {
+    if (sortedData) {
+      setUpdatedData(sortedData);
+    }
+  }, [sortedData]);
+
+  useEffect(() => {});
 
   const fetchAnts = async () => {
     const response = await fetch("https://sg-ants-server.herokuapp.com/ants");
@@ -40,7 +44,8 @@ export default function RaceScreen({ navigation }) {
 
   const handleSet = () => {
     fetchAnts();
-    setField(true);
+    setField(!field);
+    setRaceStarted(!raceStarted);
   };
 
   function generateAntWinLikelihoodCalculator() {
@@ -54,7 +59,7 @@ export default function RaceScreen({ navigation }) {
     };
   }
 
-  const fetchAntWinLikelihood = (index) => {
+  const fetchWinLikelihood = (index) => {
     return new Promise(generateAntWinLikelihoodCalculator()).then(
       (resolved) => {
         setUpdatedData(
@@ -66,23 +71,34 @@ export default function RaceScreen({ navigation }) {
 
   const startRace = () => {
     for (let i = 0; i < data.length; i++) {
-      fetchAntWinLikelihood(i);
+      fetchWinLikelihood(i);
       updatedData[i].status = "In progress";
     }
-    setHasRaceStarted(true);
+    setRaceStarted(true);
+    setField(!field);
   };
 
-  // const sortUpdatedData = () => {
-  //   updatedData.sort((a, b) => {
-  //     // console.log(a.updatedData.status);
-  //     if (a.updatedData.status === "In progress") {
-  //       hasRaceStarted = true;
-  //       return 1;
-  //     }
-  //     return b.updatedData.status - a.updatedData.status;
-  //   });
+  const sortedData = useMemo(() => {
+    data.sort((a, b) => {
+      if (a.status === "In progress") {
+        return 1;
+      }
+      return b.status - a.status;
+    });
+  });
+
+  // const checkIfRaceIsComplete = () => {
+  //   //check if all data status is a number
+  //   for (let i = 0; i < updatedData.length; i++) {
+  //     if (isNaN(updatedData[i].status) === false) return;
+  //   }
+  //   r;
+  //   //if yes updateRaceCompleted(true)
+  //   setRaceCompleted(true);
   // };
-  // console.log("here is updated", updatedData);
+
+  console.log("here is updatedData+++++++", updatedData);
+  console.log("completed", raceCompleted);
 
   const Item = ({ name, length, color, weight, status }) => (
     <View style={styles.row}>
@@ -123,19 +139,32 @@ export default function RaceScreen({ navigation }) {
           </Text>
         </Animated.View>
       ) : (
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.name}
-          extraData={updatedData}
-        />
+        <View style={styles.flatListContainer}>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.name}
+            extraData={updatedData}
+          />
+          {raceStarted ? (
+            <Animated.View
+              style={[styles.alertTextContainer, { opacity: fadeAnimation }]}
+            >
+              {/* <Text style={styles.alertText}>They are at the start</Text> */}
+              <Text style={styles.alertText}>And they're off!</Text>
+            </Animated.View>
+          ) : (
+            <Animated.View
+              style={[styles.alertTextContainer, { opacity: fadeAnimation }]}
+            >
+              <Text style={styles.alertText}>They' re at the start</Text>
+              {/* <Text style={styles.alertText}>And their off!</Text> */}
+            </Animated.View>
+          )}
+        </View>
       )}
       {field ? (
-        hasRaceStarted ? (
-          <Text style={styles.alertText}>Race has started</Text>
-        ) : (
-          <FlatButton title="Start Race" onPress={startRace} />
-        )
+        <FlatButton title="Start Race" onPress={startRace} />
       ) : (
         <FlatButton title="Set Race" onPress={handleSet} />
       )}

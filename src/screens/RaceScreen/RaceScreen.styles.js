@@ -8,6 +8,14 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
+  flatListContainer: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
   row: {
     marginVertical: 10,
     flexDirection: "row",
@@ -50,6 +58,7 @@ export const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     fontSize: 30,
+    marginBottom: 200,
   },
   waitingTextContainer: {
     width: "85%",
