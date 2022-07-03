@@ -9,10 +9,11 @@ export default function RaceScreen({ navigation }) {
   const [status, updateStatus] = useState("Not yet run");
 
   const [raceStarted, setRaceStarted] = useState(false);
+  const [raceWinner, setRaceWinner] = useState("");
   const [raceCompleted, setRaceCompleted] = useState(false);
 
   const [loading, setLoading] = useState(true);
-  const [field, setField] = useState(true);
+  const [field, setField] = useState(false);
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -29,8 +30,6 @@ export default function RaceScreen({ navigation }) {
     }
   }, [sortedData]);
 
-  useEffect(() => {});
-
   const fetchAnts = async () => {
     const response = await fetch("https://sg-ants-server.herokuapp.com/ants");
     const responseData = await response.json();
@@ -46,6 +45,8 @@ export default function RaceScreen({ navigation }) {
     fetchAnts();
     setField(!field);
     setRaceStarted(!raceStarted);
+    setRaceCompleted(false);
+    setRaceWinner("");
   };
 
   function generateAntWinLikelihoodCalculator() {
@@ -62,20 +63,22 @@ export default function RaceScreen({ navigation }) {
   const fetchWinLikelihood = (index) => {
     return new Promise(generateAntWinLikelihoodCalculator()).then(
       (resolved) => {
-        setUpdatedData(
-          (updatedData[index].status = Math.round(100 * resolved))
-        );
+        setUpdatedData([
+          ...updatedData,
+          (updatedData[index].status = Math.round(100 * resolved)),
+        ]);
       }
     );
   };
 
   const startRace = () => {
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < updatedData.length; i++) {
       fetchWinLikelihood(i);
-      updatedData[i].status = "In progress";
+      [...updatedData, (updatedData[i].status = "In progress")];
     }
-    setRaceStarted(true);
+    setRaceStarted(!raceStarted);
     setField(!field);
+    fetchRaceWinner();
   };
 
   const sortedData = useMemo(() => {
@@ -87,18 +90,12 @@ export default function RaceScreen({ navigation }) {
     });
   });
 
-  // const checkIfRaceIsComplete = () => {
-  //   //check if all data status is a number
-  //   for (let i = 0; i < updatedData.length; i++) {
-  //     if (isNaN(updatedData[i].status) === false) return;
-  //   }
-  //   r;
-  //   //if yes updateRaceCompleted(true)
-  //   setRaceCompleted(true);
-  // };
-
-  console.log("here is updatedData+++++++", updatedData);
-  console.log("completed", raceCompleted);
+  const fetchRaceWinner = () => {
+    setTimeout(() => {
+      setRaceWinner(updatedData[0].name);
+      setRaceCompleted(true);
+    }, 15000);
+  };
 
   const Item = ({ name, length, color, weight, status }) => (
     <View style={styles.row}>
@@ -150,15 +147,19 @@ export default function RaceScreen({ navigation }) {
             <Animated.View
               style={[styles.alertTextContainer, { opacity: fadeAnimation }]}
             >
-              {/* <Text style={styles.alertText}>They are at the start</Text> */}
-              <Text style={styles.alertText}>And they're off!</Text>
+              <Text style={styles.alertText}>They're at the start</Text>
+            </Animated.View>
+          ) : raceCompleted ? (
+            <Animated.View
+              style={[styles.alertTextContainer, { opacity: fadeAnimation }]}
+            >
+              <Text style={styles.alertText}>The winner is {raceWinner}!</Text>
             </Animated.View>
           ) : (
             <Animated.View
               style={[styles.alertTextContainer, { opacity: fadeAnimation }]}
             >
-              <Text style={styles.alertText}>They' re at the start</Text>
-              {/* <Text style={styles.alertText}>And their off!</Text> */}
+              <Text style={styles.alertText}>And they're off!</Text>
             </Animated.View>
           )}
         </View>

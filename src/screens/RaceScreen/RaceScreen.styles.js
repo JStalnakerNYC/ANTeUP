@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
   flatListContainer: {
     flex: 1,
     flexDirection: "column",
-    backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
